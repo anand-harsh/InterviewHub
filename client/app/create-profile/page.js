@@ -11,7 +11,7 @@ export default function CreateProfile() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
-    currentRole: '',
+    currentJobRole: '',
     company: '',
     yearsOfExperience: 0,
     timezone: 'IST',
@@ -107,8 +107,8 @@ export default function CreateProfile() {
                     </label>
                     <input
                       type="text"
-                      name="currentRole"
-                      value={formData.currentRole}
+                      name="currentJobRole"
+                      value={formData.currentJobRole}
                       onChange={handleChange}
                       placeholder="Software Engineer"
                       required

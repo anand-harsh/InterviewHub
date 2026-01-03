@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class MatchCriteria {
-    private String currentRole;
+    private String currentJobRole;
     private String targetRole;
     private String company;
     private String skills;

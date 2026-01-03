@@ -57,7 +57,7 @@ public class MatchingService {
 
     @Transactional(readOnly = true)
     public PageResponse<MatchResponse> advancedSearch(
-            Long userId, String currentRole, String targetRole, String company,
+            Long userId, String currentJobRole, String targetRole, String company,
             String skills, Integer minExp, Integer maxExp, String timezone,
             Boolean availableOnly, Integer page, Integer size
     ) {
@@ -75,8 +75,8 @@ public class MatchingService {
         List<Profile> allProfiles = profileRepository.findAllWithSkills().stream()
                 .filter(p -> !p.getUser().getId().equals(userId))
                 .filter(p -> !availableOnly || p.getAvailableForInterview())
-                .filter(p -> currentRole == null ||
-                        p.getCurrentRole().toLowerCase().contains(currentRole.toLowerCase()))
+                .filter(p -> currentJobRole == null ||
+                        p.getCurrentJobRole().toLowerCase().contains(currentJobRole.toLowerCase()))
                 .filter(p -> targetRole == null ||
                         p.getTargetRole().toLowerCase().contains(targetRole.toLowerCase()))
                 .filter(p -> company == null ||
@@ -152,7 +152,7 @@ public class MatchingService {
         List<Profile> profiles = profileRepository.findAllWithSkills().stream()
                 .filter(p -> !p.getUser().getId().equals(userId))
                 .filter(Profile::getAvailableForInterview)
-                .filter(p -> p.getCurrentRole().equalsIgnoreCase(currentProfile.getTargetRole()))
+                .filter(p -> p.getCurrentJobRole().equalsIgnoreCase(currentProfile.getTargetRole()))
                 .filter(p -> p.getYearsOfExperience() >= minExperience)
                 .collect(Collectors.toList());
 
@@ -173,7 +173,7 @@ public class MatchingService {
         List<Profile> profiles = profileRepository.findAllWithSkills().stream()
                 .filter(p -> !p.getUser().getId().equals(userId))
                 .filter(Profile::getAvailableForInterview)
-                .filter(p -> p.getTargetRole().equalsIgnoreCase(currentProfile.getCurrentRole()))
+                .filter(p -> p.getTargetRole().equalsIgnoreCase(currentProfile.getCurrentJobRole()))
                 .collect(Collectors.toList());
 
         List<MatchResponse> matches = profiles.stream()
@@ -259,10 +259,10 @@ public class MatchingService {
         List<String> reasons = new ArrayList<>();
         String primaryReason = "";
 
-        if (target.getCurrentRole().equalsIgnoreCase(current.getTargetRole())) {
+        if (target.getCurrentJobRole().equalsIgnoreCase(current.getTargetRole())) {
             reasons.add("Can interview you for " + current.getTargetRole());
             primaryReason = "Perfect interviewer for your target role";
-        } else if (target.getTargetRole().equalsIgnoreCase(current.getCurrentRole())) {
+        } else if (target.getTargetRole().equalsIgnoreCase(current.getCurrentJobRole())) {
             reasons.add("Preparing for your current role");
             primaryReason = "You can help them prepare";
         }
@@ -293,7 +293,7 @@ public class MatchingService {
                 .userId(target.getUser().getId())
                 .profileId(target.getId())
                 .name(target.getUser().getEmail())
-                .currentRole(target.getCurrentRole())
+                .currentJobRole(target.getCurrentJobRole())
                 .company(target.getCompany())
                 .yearsOfExperience(target.getYearsOfExperience())
                 .timezone(target.getTimezone())
@@ -352,11 +352,11 @@ public class MatchingService {
         int score = 0;
 
         // Perfect match: target can interview for current's target role
-        if (target.getCurrentRole().equalsIgnoreCase(current.getTargetRole())) {
+        if (target.getCurrentJobRole().equalsIgnoreCase(current.getTargetRole())) {
             score += 90;
         }
         // Good match: current can interview for target's target role
-        else if (target.getTargetRole().equalsIgnoreCase(current.getCurrentRole())) {
+        else if (target.getTargetRole().equalsIgnoreCase(current.getCurrentJobRole())) {
             score += 85;
         }
         // Same target role (peer practice)
@@ -364,12 +364,12 @@ public class MatchingService {
             score += 70;
         }
         // Same current role (peer practice)
-        else if (target.getCurrentRole().equalsIgnoreCase(current.getCurrentRole())) {
+        else if (target.getCurrentJobRole().equalsIgnoreCase(current.getCurrentJobRole())) {
             score += 60;
         }
         // Partial match
-        else if (target.getCurrentRole().toLowerCase().contains(current.getTargetRole().toLowerCase()) ||
-                current.getTargetRole().toLowerCase().contains(target.getCurrentRole().toLowerCase())) {
+        else if (target.getCurrentJobRole().toLowerCase().contains(current.getTargetRole().toLowerCase()) ||
+                current.getTargetRole().toLowerCase().contains(target.getCurrentJobRole().toLowerCase())) {
             score += 50;
         }
         else {
@@ -442,12 +442,12 @@ public class MatchingService {
         String roleMatchDescription;
         boolean roleMatch = false;
 
-        if (target.getCurrentRole().equalsIgnoreCase(current.getTargetRole())) {
+        if (target.getCurrentJobRole().equalsIgnoreCase(current.getTargetRole())) {
             roleMatch = true;
             roleMatchType = "INTERVIEWER";
             roleMatchDescription = target.getUser().getEmail() + " can interview you for " +
                     current.getTargetRole();
-        } else if (target.getTargetRole().equalsIgnoreCase(current.getCurrentRole())) {
+        } else if (target.getTargetRole().equalsIgnoreCase(current.getCurrentJobRole())) {
             roleMatch = true;
             roleMatchType = "REVERSE";
             roleMatchDescription = "You can interview " + target.getUser().getEmail() +
@@ -526,7 +526,7 @@ public class MatchingService {
                 .profile(UserMatchDetailResponse.ProfileInfo.builder()
                         .id(target.getId())
                         .name(target.getUser().getEmail())
-                        .currentRole(target.getCurrentRole())
+                        .currentJobRole(target.getCurrentJobRole())
                         .company(target.getCompany())
                         .yearsOfExperience(target.getYearsOfExperience())
                         .timezone(target.getTimezone().name())

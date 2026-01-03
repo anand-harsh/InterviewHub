@@ -7,8 +7,8 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "password_reset_tokens", indexes = {
-        @Index(name = "idx_token", columnList = "token"),
-        @Index(name = "idx_user_id", columnList = "user_id")
+        @Index(name = "idx_reset_token", columnList = "token"),
+        @Index(name = "idx_reset_user_id", columnList = "user_id")
 })
 @Getter
 @Setter

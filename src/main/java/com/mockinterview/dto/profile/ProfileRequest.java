@@ -13,7 +13,7 @@ public class ProfileRequest {
 
     @NotBlank(message = "Current role is required")
     @Size(max = 100, message = "Current role must not exceed 100 characters")
-    private String currentRole;
+    private String currentJobRole;
 
     @NotBlank(message = "Company is required")
     @Size(max = 100, message = "Company must not exceed 100 characters")

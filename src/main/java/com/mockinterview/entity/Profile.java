@@ -7,11 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "profiles", indexes = {
-        @Index(name = "idx_target_role", columnList = "target_role"),
-        @Index(name = "idx_current_role", columnList = "current_role"),
-        @Index(name = "idx_available", columnList = "available_for_interview")
-})
+//@Table(
+//        indexes = {
+//                @Index(name = "idx_profiles_target_role", columnList = "target_role"),
+//                @Index(name = "idx_profiles_current_role", columnList = "current_role"),
+//                @Index(name = "idx_profiles_available", columnList = "available_for_interview")
+//        }
+//)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,11 +29,11 @@ public class Profile extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @Column(name = "current_role", nullable = false, length = 100)
-    private String currentRole;
-
     @Column(nullable = false, length = 100)
     private String company;
+
+    @Column(name = "current_job_role", nullable = false, length = 100)
+    private String currentJobRole;
 
     @Column(name = "years_of_experience", nullable = false)
     private Integer yearsOfExperience;

@@ -81,11 +81,11 @@ export default function Profile() {
                 <div className="flex items-center gap-4">
                   <div className="w-20 h-20 bg-gradient-to-br from-amber-600 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
                     <span className="text-3xl font-bold text-white">
-                      {profile.currentRole.charAt(0)}
+                      {profile.currentJobRole.charAt(0)}
                     </span>
                   </div>
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900">{profile.currentRole}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">{profile.currentJobRole}</h1>
                     <p className="text-gray-600 mt-1">{profile.company}</p>
                   </div>
                 </div>
@@ -119,7 +119,7 @@ export default function Profile() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-600 font-medium mb-1">Role</p>
-                        <p className="font-semibold text-gray-900">{profile.currentRole}</p>
+                        <p className="font-semibold text-gray-900">{profile.currentJobRole}</p>
                       </div>
                     </div>
                   </div>

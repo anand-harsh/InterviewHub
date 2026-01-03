@@ -53,7 +53,7 @@ public class MatchController {
     public ResponseEntity<ApiResponse<PageResponse<MatchResponse>>> searchMatches(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Parameter(description = "Current role to search for")
-            @RequestParam(required = false) String currentRole,
+            @RequestParam(required = false) String currentJobRole,
             @Parameter(description = "Target role to search for")
             @RequestParam(required = false) String targetRole,
             @Parameter(description = "Company name")
@@ -74,7 +74,7 @@ public class MatchController {
             @RequestParam(defaultValue = "20") Integer size
     ) {
         PageResponse<MatchResponse> results = matchingService.advancedSearch(
-                userPrincipal.getId(), currentRole, targetRole, company, skills,
+                userPrincipal.getId(), currentJobRole, targetRole, company, skills,
                 minExperience, maxExperience, timezone, availableOnly, page, size
         );
         return ResponseEntity.ok(ApiResponse.success(results));

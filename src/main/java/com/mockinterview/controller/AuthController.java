@@ -8,6 +8,7 @@ import com.mockinterview.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,9 +38,10 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Login user")
     public ResponseEntity<ApiResponse<LoginResponse>> login(
-            @Valid @RequestBody LoginRequest request
+            @Valid @RequestBody LoginRequest request,
+            HttpServletResponse httpServletResponse
     ) {
-        LoginResponse response = authService.login(request);
+        LoginResponse response = authService.login(request, httpServletResponse);
         return ResponseEntity.ok(ApiResponse.success("Login successful", response));
     }
 
@@ -56,9 +58,10 @@ public class AuthController {
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Logout user")
     public ResponseEntity<ApiResponse<MessageResponse>> logout(
-            @AuthenticationPrincipal UserPrincipal userPrincipal
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            HttpServletResponse httpServletResponse
     ) {
-        authService.logout(userPrincipal.getId());
+        authService.logout(userPrincipal.getId(), httpServletResponse);
         return ResponseEntity.ok(
                 ApiResponse.success(
                         MessageResponse.builder().message("Logged out successfully").build()

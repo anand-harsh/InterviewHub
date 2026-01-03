@@ -14,7 +14,7 @@ public class ProfileCompletionCalculator {
         int totalFields = 7;
         int completedFields = 0;
 
-        if (profile.getCurrentRole() != null && !profile.getCurrentRole().isEmpty()) {
+        if (profile.getCurrentJobRole() != null && !profile.getCurrentJobRole().isEmpty()) {
             completedFields++;
         }
         if (profile.getCompany() != null && !profile.getCompany().isEmpty()) {

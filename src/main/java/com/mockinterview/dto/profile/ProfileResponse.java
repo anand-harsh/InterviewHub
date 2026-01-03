@@ -14,7 +14,7 @@ import java.util.Set;
 public class ProfileResponse {
     private Long id;
     private Long userId;
-    private String currentRole;
+    private String currentJobRole;
     private String company;
     private Integer yearsOfExperience;
     private Profile.Timezone timezone;

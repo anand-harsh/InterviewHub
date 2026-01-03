@@ -46,7 +46,7 @@ public class ProfileService {
 
         Profile profile = Profile.builder()
                 .user(user)
-                .currentRole(request.getCurrentRole())
+                .currentJobRole(request.getCurrentJobRole())
                 .company(request.getCompany())
                 .yearsOfExperience(request.getYearsOfExperience())
                 .timezone(request.getTimezone())
@@ -73,7 +73,7 @@ public class ProfileService {
                 .orElseThrow(() -> new ResourceNotFoundException("Profile", "userId", userId));
 
         // Update fields
-        profile.setCurrentRole(request.getCurrentRole());
+        profile.setCurrentJobRole(request.getCurrentJobRole());
         profile.setCompany(request.getCompany());
         profile.setYearsOfExperience(request.getYearsOfExperience());
         profile.setTimezone(request.getTimezone());
@@ -157,7 +157,7 @@ public class ProfileService {
         return ProfileResponse.builder()
                 .id(profile.getId())
                 .userId(profile.getUser().getId())
-                .currentRole(profile.getCurrentRole())
+                .currentJobRole(profile.getCurrentJobRole())
                 .company(profile.getCompany())
                 .yearsOfExperience(profile.getYearsOfExperience())
                 .timezone(profile.getTimezone())

@@ -82,7 +82,7 @@ export default function Home() {
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Practice & Improve</h3>
             <p className="text-gray-600">Get real feedback and improve your interview skills with every session.</p>
-          </div>
+          </div>zd
         </div>
 
         {/* CTA Section */}

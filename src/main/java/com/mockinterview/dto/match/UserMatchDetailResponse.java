@@ -24,7 +24,7 @@ public class UserMatchDetailResponse {
     public static class ProfileInfo {
         private Long id;
         private String name;
-        private String currentRole;
+        private String currentJobRole;
         private String company;
         private Integer yearsOfExperience;
         private String timezone;

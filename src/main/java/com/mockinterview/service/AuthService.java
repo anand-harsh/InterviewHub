@@ -17,9 +17,12 @@ import com.mockinterview.security.JwtTokenProvider;
 import com.mockinterview.util.TokenGenerator;
 import com.mockinterview.security.UserPrincipal;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -98,7 +101,8 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request, HttpServletResponse response) {
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -111,31 +115,50 @@ public class AuthService {
         User user = userRepository.findById(userPrincipal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
 
-        // Update last login
         user.setLastLogin(Instant.now());
         userRepository.save(user);
 
-        // Generate tokens
         String accessToken = tokenProvider.generateAccessToken(authentication);
         String refreshToken = tokenProvider.generateRefreshToken(userPrincipal.getId());
 
-        // Save refresh token
-        RefreshToken refreshTokenEntity = RefreshToken.builder()
-                .token(refreshToken)
-                .user(user)
-                .expiresAt(Instant.now().plus(tokenProvider.getRefreshTokenExpiration(), ChronoUnit.MILLIS))
-                .revoked(false)
+        refreshTokenRepository.save(
+                RefreshToken.builder()
+                        .token(refreshToken)
+                        .user(user)
+                        .expiresAt(Instant.now().plus(
+                                tokenProvider.getRefreshTokenExpiration(),
+                                ChronoUnit.MILLIS
+                        ))
+                        .revoked(false)
+                        .build()
+        );
+
+        // 🔐 ACCESS TOKEN COOKIE
+        ResponseCookie accessCookie = ResponseCookie.from("accessToken", accessToken)
+                .httpOnly(true)
+                .secure(false) // true in prod (HTTPS)
+                .path("/")
+                .maxAge(tokenProvider.getAccessTokenExpiration() / 1000)
+                .sameSite("Lax")
                 .build();
 
-        refreshTokenRepository.save(refreshTokenEntity);
+        // 🔐 REFRESH TOKEN COOKIE
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(tokenProvider.getRefreshTokenExpiration() / 1000)
+                .sameSite("Lax")
+                .build();
 
-        log.info("User logged in successfully: {}", user.getEmail());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         return LoginResponse.builder()
-                .accessToken(accessToken)
+                .accessToken(accessToken)   // still return (SPA usage)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
-                .expiresIn(tokenProvider.getAccessTokenExpiration() / 1000) // in seconds
+                .expiresIn(tokenProvider.getAccessTokenExpiration() / 1000)
                 .user(UserInfo.builder()
                         .id(user.getId())
                         .email(user.getEmail())
@@ -145,6 +168,7 @@ public class AuthService {
                         .build())
                 .build();
     }
+
 
     @Transactional
     public TokenResponse refreshToken(RefreshTokenRequest request) {
@@ -202,11 +226,26 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(Long userId) {
-        // Revoke all refresh tokens for user
+    public void logout(Long userId, HttpServletResponse response) {
+
         refreshTokenRepository.revokeAllByUserId(userId);
-        log.info("User logged out: userId={}", userId);
+
+        ResponseCookie clearAccess = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        ResponseCookie clearRefresh = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, clearAccess.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, clearRefresh.toString());
     }
+
 
     @Transactional
     public void verifyEmail(VerifyEmailRequest request) {

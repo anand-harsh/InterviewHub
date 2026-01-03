@@ -16,7 +16,7 @@ public class MatchResponse {
     private Long userId;
     private Long profileId;
     private String name; // Will be email for now, can add real name later
-    private String currentRole;
+    private String currentJobRole;
     private String company;
     private Integer yearsOfExperience;
     private Profile.Timezone timezone;

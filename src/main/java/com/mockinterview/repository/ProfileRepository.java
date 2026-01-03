@@ -55,10 +55,10 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     );
 
     @Query("SELECT p FROM Profile p LEFT JOIN FETCH p.skills " +
-            "WHERE p.currentRole = :currentRole AND p.user.id <> :userId " +
+            "WHERE p.currentJobRole = :currentJobRole AND p.user.id <> :userId " +
             "AND p.availableForInterview = true")
-    List<Profile> findByCurrentRoleExcludingUser(
-            @Param("currentRole") String currentRole,
+    List<Profile> findByCurrentJobRoleExcludingUser(
+            @Param("currentJobRole") String currentJobRole,
             @Param("userId") Long userId
     );
 
