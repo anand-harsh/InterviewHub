@@ -1,4 +1,4 @@
-# Mock Interview Matcher
+# InterviewHub (Mock Interview Matcher)
 
 A backend platform that helps software engineers discover suitable mock interview partners based on role compatibility, skills, experience, and timezone. The platform provides personalized recommendations, secure authentication, profile management, and Google Calendar integration for interview scheduling.
 
